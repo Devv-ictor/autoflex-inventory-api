@@ -1,26 +1,49 @@
 package com.autoflex.inventory_api.controller;
 
 import com.autoflex.inventory_api.model.RawMaterial;
-import com.autoflex.inventory_api.repository.RawMaterialRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.autoflex.inventory_api.service.RawMaterialService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/raw-materials")
+@RequestMapping("/api/raw-materials")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class RawMaterialController {
 
-    @Autowired
-    private RawMaterialRepository repository;
+    private final RawMaterialService rawMaterialService;
 
+    // GET - Listar tudo
     @GetMapping
-    public List<RawMaterial> getAll() {
-        return repository.findAll();
+    public ResponseEntity<List<RawMaterial>> getAll() {
+        return ResponseEntity.ok(rawMaterialService.listAll());
     }
 
+    // GET - Buscar um
     @GetMapping("/{id}")
-    public ResponseEntity
+    public ResponseEntity<RawMaterial> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(rawMaterialService.findById(id));
+    }
+
+    // POST - Criar
+    @PostMapping
+    public ResponseEntity<RawMaterial> create(@RequestBody RawMaterial rawMaterial) {
+        return ResponseEntity.ok(rawMaterialService.create(rawMaterial));
+    }
+
+    // PUT - Atualizar
+    @PutMapping("/{id}")
+    public ResponseEntity<RawMaterial> update(@PathVariable Long id, @RequestBody RawMaterial rawMaterial) {
+        return ResponseEntity.ok(rawMaterialService.update(id, rawMaterial));
+    }
+
+    // DELETE - Deletar
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        rawMaterialService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
