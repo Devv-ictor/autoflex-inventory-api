@@ -6,6 +6,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entity representing a Product in the inventory.
+ */
 @Data
 @Entity
 @Table(name = "products")
@@ -22,6 +25,6 @@ public class Product {
     private BigDecimal value;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    // NÃO usamos @JsonIgnore aqui, o frontend precisa ver a lista
+    // We don't use @JsonIgnore here because the frontend needs the recipe details
     private List<ProductRecipe> recipes = new ArrayList<>();
 }

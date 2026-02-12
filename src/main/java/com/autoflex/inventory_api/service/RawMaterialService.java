@@ -14,23 +14,31 @@ import java.util.List;
 public class RawMaterialService {
     private final RawMaterialRepository rawMaterialRepository;
 
-    // Listar todos os materiais
+    /**
+     * Lists all raw materials in the database.
+     */
     public List<RawMaterial> listAll() {
         return rawMaterialRepository.findAll();
     }
 
-    // Buscar por ID
+    /**
+     * Finds a raw material by its ID. Throws ResourceNotFoundException if not found.
+     */
     public RawMaterial findById(Long id) {
         return rawMaterialRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Raw material not found with ID: " + id));
     }
 
-    // Criar novo material
+    /**
+     * Persists a new raw material.
+     */
     public RawMaterial create(RawMaterial rawMaterialDetails) {
         return rawMaterialRepository.save(rawMaterialDetails);
     }
 
-    // Atualizar material
+    /**
+     * Updates an existing raw material.
+     */
     @Transactional
     public RawMaterial update(long id, RawMaterial rawMaterialDetails) {
         RawMaterial rawMaterial = findById(id);
@@ -41,7 +49,9 @@ public class RawMaterialService {
         return rawMaterialRepository.save(rawMaterial);
     }
 
-    // Deletar material
+    /**
+     * Removes a raw material from the database by ID.
+     */
     public void delete(long id) {
         rawMaterialRepository.deleteById(id);
     }

@@ -25,29 +25,31 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final RawMaterialRepository rawMaterialRepository;
 
-    // Listar todos
+    /**
+     * Lists all products.
+     */
     public List<Product> findAll() {
         return productRepository.findAll();
     }
 
-    // Criar Produto com receita
+    /**
+     * Creates a new product and associates its recipe items.
+     */
     @Transactional
     public Product create(ProductRequestDTO dto) {
-        // 1. Cria a entidade Produto baseada no DTO
+        // 1. Create the Product entity from the DTO
         Product product = new Product();
         product.setName(dto.name());
         product.setValue(dto.value());
 
-        // 2. Cria a lista de receitas (relacionamento)
+        // 2. Map the recipe items from the DTO to the ProductRecipe entity
         List<ProductRecipe> recipes = new ArrayList<>();
 
-        // Se houver receitas no DTO, convertemos para entidades
         if (dto.recipes() != null) {
             recipes = dto.recipes().stream().map(itemDto -> {
                 RawMaterial rm = rawMaterialRepository.findById(itemDto.rawMaterialId())
                     .orElseThrow(() -> new ResourceNotFoundException("Raw Material not found with ID: " + itemDto.rawMaterialId()));
 
-                // Cria o item da receita
                 ProductRecipe recipe = new ProductRecipe();
                 recipe.setProduct(product);
                 recipe.setRawMaterial(rm);
@@ -56,37 +58,39 @@ public class ProductService {
                 return recipe;
             }).collect(Collectors.toList());
         }
-        // 3. Define as receitas no produto
+        // 3. Set the recipes to the product
         product.setRecipes(recipes);
 
-        // 4. Salva o produto. O CascadeType.ALL vai salvar as receitas automaticamente
+        // 4. Save the product (CascadeType.ALL ensures recipes are saved too)
         return productRepository.save(product);
     }
 
-    // ... métodos anteriores ...
-
+    /**
+     * Calculates an optimized production plan based on available stock.
+     * Higher value products are prioritized to maximize potential revenue.
+     */
     @Transactional
     public List<ProductionSuggestionDTO> calculateProductionPlan() {
-        // 1. Buscar todos os produtos e criar uma lista mutável
+        // 1. Fetch all products and create a mutable list for sorting
         List<Product> products = new ArrayList<>(productRepository.findAll());
 
-        // 2. Ordenar pelo MAIOR valor (Requisito de priorização)
+        // 2. Sort by HIGHEST value (Prioritization requirement)
         products.sort((p1, p2) -> p2.getValue().compareTo(p1.getValue()));
 
-        // 3. Mapear o estoque atual de matérias primas para um Mapa
+        // 3. Map current raw material stock for quick lookup and simulation
         Map<Long, Integer> stockMap = new HashMap<>();
         rawMaterialRepository.findAll().forEach(rm -> stockMap.put(rm.getId(), rm.getQuantity()));
 
         List<ProductionSuggestionDTO> suggestions = new ArrayList<>();
 
-        // 4. Iterar sobre os produtos
+        // 4. Iterate over products to simulate production
         for (Product product : products) {
             if (product.getRecipes().isEmpty()) continue;
 
             int maxProducible = Integer.MAX_VALUE;
             boolean hasValidRecipe = false;
 
-            // Encontrar o ingrediente limitante
+            // Find the limiting ingredient for this product
             for (ProductRecipe recipe : product.getRecipes()) {
                 Long materialId = recipe.getRawMaterial().getId();
                 int needed = recipe.getQuantityNeeded();
@@ -101,9 +105,9 @@ public class ProductService {
                 }
             }
 
-            // Se for possível produzir pelo menos 1
+            // If production is possible for at least 1 unit
             if (hasValidRecipe && maxProducible > 0 && maxProducible != Integer.MAX_VALUE) {
-                // Subtrair do estoque simulado
+                // Deduct from simulated stock
                 for (ProductRecipe recipe : product.getRecipes()) {
                     Long materialId = recipe.getRawMaterial().getId();
                     int totalNeeded = recipe.getQuantityNeeded() * maxProducible;

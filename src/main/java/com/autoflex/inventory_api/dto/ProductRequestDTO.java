@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * DTO for receiving product creation requests.
+ */
 public record ProductRequestDTO(
         @NotBlank(message = "O nome do produto é obrigatório")
         String name,

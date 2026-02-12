@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing the relationship between a Product and its Raw Materials.
+ * Defines the amount of a specific material needed to produce a product.
+ */
 @Data
 @Entity
 @Table(name = "product_recipes")
@@ -15,7 +19,7 @@ public class ProductRecipe {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    @JsonIgnore
+    @JsonIgnore // Prevent infinite recursion in JSON serialization
     private Product product;
 
     @ManyToOne(fetch = FetchType.EAGER)

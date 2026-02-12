@@ -12,36 +12,46 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/raw-materials")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*") // Allows cross-origin requests for testing purposes
 public class RawMaterialController {
 
     private final RawMaterialService rawMaterialService;
 
-    // GET - Listar tudo
+    /**
+     * Lists all raw materials.
+     */
     @GetMapping
     public ResponseEntity<List<RawMaterial>> getAll() {
         return ResponseEntity.ok(rawMaterialService.listAll());
     }
 
-    // GET - Buscar um
+    /**
+     * Finds a specific raw material by its ID.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<RawMaterial> getById(@PathVariable Long id) {
         return ResponseEntity.ok(rawMaterialService.findById(id));
     }
 
-    // POST - Criar
+    /**
+     * Registers a new raw material.
+     */
     @PostMapping
     public ResponseEntity<RawMaterial> create(@Valid @RequestBody RawMaterial rawMaterial) {
         return ResponseEntity.ok(rawMaterialService.create(rawMaterial));
     }
 
-    // PUT - Atualizar
+    /**
+     * Updates an existing raw material.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<RawMaterial> update(@PathVariable Long id, @Valid @RequestBody RawMaterial rawMaterial) {
         return ResponseEntity.ok(rawMaterialService.update(id, rawMaterial));
     }
 
-    // DELETE - Deletar
+    /**
+     * Deletes a raw material by its ID.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         rawMaterialService.delete(id);

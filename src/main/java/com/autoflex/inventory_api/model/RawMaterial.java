@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
+/**
+ * Entity representing Raw Materials (stock items).
+ */
 @Data
 @Entity
 @Table(name="raw_materials")
