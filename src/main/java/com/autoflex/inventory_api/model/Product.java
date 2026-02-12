@@ -1,21 +1,19 @@
 package com.autoflex.inventory_api.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import jakarta.persistence.*;
+import lombok.Data;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
-@Table(name="products")
-
+@Table(name = "products")
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     private String name;
@@ -24,6 +22,6 @@ public class Product {
     private BigDecimal value;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    // NÃO usamos @JsonIgnore aqui, o frontend precisa ver a lista
     private List<ProductRecipe> recipes = new ArrayList<>();
 }

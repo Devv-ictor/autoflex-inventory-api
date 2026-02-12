@@ -4,6 +4,7 @@ import com.autoflex.inventory_api.dto.ProductRequestDTO;
 import com.autoflex.inventory_api.dto.ProductionSuggestionDTO;
 import com.autoflex.inventory_api.model.Product;
 import com.autoflex.inventory_api.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> create(@RequestBody ProductRequestDTO dto) {
+    public ResponseEntity<Product> create(@Valid @RequestBody ProductRequestDTO dto) {
         return ResponseEntity.ok(productService.create(dto));
     }
 

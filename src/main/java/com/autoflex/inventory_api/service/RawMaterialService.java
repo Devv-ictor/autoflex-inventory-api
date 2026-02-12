@@ -1,5 +1,6 @@
 package com.autoflex.inventory_api.service;
 
+import com.autoflex.inventory_api.exception.ResourceNotFoundException;
 import com.autoflex.inventory_api.model.RawMaterial;
 import com.autoflex.inventory_api.repository.RawMaterialRepository;
 import jakarta.transaction.Transactional;
@@ -21,7 +22,7 @@ public class RawMaterialService {
     // Buscar por ID
     public RawMaterial findById(Long id) {
         return rawMaterialRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Raw material not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Raw material not found with ID: " + id));
     }
 
     // Criar novo material

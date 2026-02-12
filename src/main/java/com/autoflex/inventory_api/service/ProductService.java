@@ -2,6 +2,7 @@ package com.autoflex.inventory_api.service;
 
 import com.autoflex.inventory_api.dto.ProductRequestDTO;
 import com.autoflex.inventory_api.dto.ProductionSuggestionDTO;
+import com.autoflex.inventory_api.exception.ResourceNotFoundException;
 import com.autoflex.inventory_api.model.Product;
 import com.autoflex.inventory_api.model.ProductRecipe;
 import com.autoflex.inventory_api.model.RawMaterial;
@@ -44,7 +45,7 @@ public class ProductService {
         if (dto.recipes() != null) {
             recipes = dto.recipes().stream().map(itemDto -> {
                 RawMaterial rm = rawMaterialRepository.findById(itemDto.rawMaterialId())
-                    .orElseThrow(() -> new RuntimeException("Raw Material not found with ID: " + itemDto.rawMaterialId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Raw Material not found with ID: " + itemDto.rawMaterialId()));
 
                 // Cria o item da receita
                 ProductRecipe recipe = new ProductRecipe();
@@ -66,8 +67,8 @@ public class ProductService {
 
     @Transactional
     public List<ProductionSuggestionDTO> calculateProductionPlan() {
-        // 1. Buscar todos os produtos
-        List<Product> products = productRepository.findAll();
+        // 1. Buscar todos os produtos e criar uma lista mutável
+        List<Product> products = new ArrayList<>(productRepository.findAll());
 
         // 2. Ordenar pelo MAIOR valor (Requisito de priorização)
         products.sort((p1, p2) -> p2.getValue().compareTo(p1.getValue()));

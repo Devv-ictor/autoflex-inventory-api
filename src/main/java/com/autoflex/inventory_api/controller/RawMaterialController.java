@@ -2,6 +2,7 @@ package com.autoflex.inventory_api.controller;
 
 import com.autoflex.inventory_api.model.RawMaterial;
 import com.autoflex.inventory_api.service.RawMaterialService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,13 +31,13 @@ public class RawMaterialController {
 
     // POST - Criar
     @PostMapping
-    public ResponseEntity<RawMaterial> create(@RequestBody RawMaterial rawMaterial) {
+    public ResponseEntity<RawMaterial> create(@Valid @RequestBody RawMaterial rawMaterial) {
         return ResponseEntity.ok(rawMaterialService.create(rawMaterial));
     }
 
     // PUT - Atualizar
     @PutMapping("/{id}")
-    public ResponseEntity<RawMaterial> update(@PathVariable Long id, @RequestBody RawMaterial rawMaterial) {
+    public ResponseEntity<RawMaterial> update(@PathVariable Long id, @Valid @RequestBody RawMaterial rawMaterial) {
         return ResponseEntity.ok(rawMaterialService.update(id, rawMaterial));
     }
 
